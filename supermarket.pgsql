@@ -41,6 +41,9 @@ INSERT INTO clientes (id, nombre, edad) VALUES
 (1,'Miguel',30),(2,'Damian',7),(3,'David',1),
 (4,'Andrea',27),(5,'Geraldine',20)
 
+INSERT INTO clientes (id, nombre, edad) VALUES 
+(6,'Bethy',43)
+
 SELECT * FROM clientes
 
 INSERT INTO productos (id, nombre_producto, precio) VALUES 
@@ -53,7 +56,11 @@ INSERT INTO pedidos (id, cliente_id, fecha, total) VALUES
 (1,1,NOW(),55000),(2,2,NOW(),80000),(3,2,NOW(),95000),
 (4,4,NOW(),20000),(5,3,NOW(),69000)
 
-SELECT * FROM pedidos
+INSERT INTO pedidos (id, cliente_id, fecha, total) VALUES 
+(6,1,NOW(),55000),(7,2,NOW(),80000),(8,2,NOW(),95000),
+(9,4,NOW(),20000),(10,3,NOW(),69000)
+
+SELECT * FROM pedidos ORDER BY total DESC
 
 INSERT INTO detalle_pedidos (id, pedido_id, producto_id, cantidad) VALUES 
 (1,1,1,5),(2,2,3,5),(3,2,4,5),
@@ -96,4 +103,24 @@ c.nombre, c.edad
 --Ejercicio 4: Muestra el nombre del cliente 
 --y el promedio del total de sus pedidos
 
-SELECT c.nombre, AVG(p.cantidad)
+SELECT c.nombre, AVG(p.total) AS total_promedio
+FROM clientes AS c
+JOIN pedidos AS p ON c.id = p.cliente_id
+GROUP BY c.nombre
+ORDER BY total_promedio DESC 
+
+--Ejercicio 5: Muestra el nombre del producto y la cantidad total de veces 
+--que se ha pedido, filtrando los productos que se han pedido más de 10 
+--veces.
+SELECT p.nombre_producto, SUM(dp.cantidad) AS cantidad_total_pedidos
+FROM productos AS p
+JOIN detalle_pedidos AS dp ON p.id = dp.producto_id
+GROUP BY p.nombre_producto
+HAVING cantidad_total_pedidos > 1
+
+--Ejercicio 6: Consultar clientes sin pedidos
+
+SELECT *
+FROM clientes AS c
+JOIN pedidos AS p ON c.id = p.cliente_id
+-- WHERE p.id = null
